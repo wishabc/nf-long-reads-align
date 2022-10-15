@@ -29,13 +29,13 @@ process mpileup {
     scratch true
 
     input:
-        tuple val(id), val(bam_file), path(bedfile)
+        tuple val(id), val(bam_file), val(bam_file_index), path(bedfile)
     output:
         tuple val(id), path(count_list)
 
     script:
     region = "${bedfile.simpleName}"
-    count_list = "${region}.counts.bed"
+    count_list = "${id}.${region}.counts.bed"
     """
     python3 ${projectDir}/bin/count_tags.py "${bam_file}" < "${bedfile}" > tags_counts.txt
     paste "${bedfile}" tags_counts.txt > ${count_list} 
@@ -71,7 +71,7 @@ workflow {
         .splitText()
         .map(it -> it.strip())
         .map(
-            it -> tuple(file(it).simpleName, file(it.bam_file))
+            it -> tuple(file(it).simpleName, file(it), file("${it}.*ai"))
         )
     
     input = Channel.fromPath(params.nanosv_regions).splitText()
