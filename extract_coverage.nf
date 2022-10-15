@@ -66,6 +66,22 @@ process sort {
     """
 }
 
+workflow pileupChunks {
+    take:
+        bam_files
+    main:
+        input = Channel.fromPath(params.nanosv_regions).splitText()
+        .map(it -> it.trim().replaceAll('\t', '_'))
+
+        regions = split_region(input) | flatten
+        pileup = mpileup(set_key_for_group_tuple(bam_files.combine(regions)))
+        
+        out = sort(pileup.groupTuple())
+    emit:
+        out
+
+}
+
 workflow {
     bam_files = Channel.fromPath(params.bams_list)
         .splitText()
@@ -73,12 +89,5 @@ workflow {
         .map(
             it -> tuple(file(it).simpleName, file(it), file("${it}.*ai"))
         )
-    
-    input = Channel.fromPath(params.nanosv_regions).splitText()
-        .map(it -> it.trim().replaceAll('\t', '_'))
-
-    regions = split_region(input) | flatten
-    pileup = mpileup(set_key_for_group_tuple(bam_files.combine(regions)))
-    
-    sort(pileup.groupTuple())
+    pileupChunks(bam_files)
 }
