@@ -77,7 +77,7 @@ workflow {
         .map(it -> it.trim().replaceAll('\t', '_'))
 
     regions = split_region(input) | flatten
-    pileup = mpileup(set_key_for_groupTuple(bam_files.combine(regions)))
+    pileup = mpileup(set_key_for_group_tuple(bam_files.combine(regions)))
     
     sort(pileup.groupTuple())
 }
