@@ -29,7 +29,7 @@ process mpileup {
     scratch true
 
     input:
-        tuple val(id), path(bam_file), path(bedfile)
+        tuple val(id), val(bam_file), path(bedfile)
     output:
         tuple val(id), path(count_list)
 
