@@ -69,6 +69,7 @@ process sort {
 workflow {
     bam_files = Channel.fromPath(params.bams_list)
         .splitText()
+        .map(it -> it.strip())
         .map(
             it -> tuple(file(it).simpleName, file(it.bam_file))
         )
