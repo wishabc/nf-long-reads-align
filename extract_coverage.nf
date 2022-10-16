@@ -56,7 +56,7 @@ process sort {
     script:
     result_bed = "${id}.counts_by_chunks.bed"
     """
-    echo "${counts_list}" |  tr " " "\n" > filenames.txt
+    echo "${counts}" |  tr " " "\n" > filenames.txt
     while read line; do
         cat \$line >> collected_file.bed
     done < filenames.txt
