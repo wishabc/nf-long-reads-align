@@ -55,9 +55,8 @@ process sort {
 
     script:
     result_bed = "${id}.counts_by_chunks.bed"
-    counts_list = counts.split(' ').join('\n')
     """
-    echo "${counts_list}" > filenames.txt
+    echo "${counts_list}" |  tr " " "\n" > filenames.txt
     while read line; do
         cat \$line >> collected_file.bed
     done < filenames.txt
