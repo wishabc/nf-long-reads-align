@@ -34,7 +34,7 @@ process mpileup {
         tuple val(id), path(count_list)
 
     script:
-    region = "${bedfile.simpleName}"
+    region = "${bedfile.name}"
     count_list = "${id}.${region}.counts.bed"
     """
     python3 ${projectDir}/bin/count_tags.py "${bam_file}" < "${bedfile}" > tags_counts.txt
