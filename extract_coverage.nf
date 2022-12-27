@@ -59,7 +59,7 @@ process mpileup_allele_wise {
     """
     sort-bed ${filtered_sites_file} | bgzip -c > snps.bed.gz
     tabix snps.bed.gz
-    python3 $moduleDir/bin/count_tag_allele_wise.py snps.bed.gz ${bam_file} > ${name}
+    python3 $moduleDir/bin/count_tags_allele_wise.py snps.bed.gz ${bam_file} > ${name}
     """
 }
 
