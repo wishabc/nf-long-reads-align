@@ -106,7 +106,7 @@ workflow pileupChunks {
 workflow alleleWise {
     data = Channel.fromPath(params.samples_file)
         .splitCsv(header:true, sep:'\t')
-        .map(row -> tuple(row.CELL_LINE, file(row.SNVS_PATH), file(row.BAM_PATH), file("${row.BAM_PATH}.bai")))
+        .map(row -> tuple(row.cell_line, file(row.snvs_path), file(row.bam_path), file("${row.bam_path}.bai")))
     mpileup_allele_wise(data)
 }
 
