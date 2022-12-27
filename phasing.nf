@@ -69,7 +69,7 @@ process whatshap_haplotag {
 }
 
 
-workflow phaseVariants {
+workflow {
     bam_files = Channel.fromPath(params.samples_file)
         .splitCsv(header:true, sep:'\t')
         .map(row -> tuple(row.indiv_id, file(row.bam_file), file("${row.bam_file}.*ai")))
