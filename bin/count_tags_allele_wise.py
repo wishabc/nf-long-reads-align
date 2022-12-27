@@ -17,7 +17,7 @@ class SNV:
         GT encoded as either 0/1 or with pipe 0|0
     """
     
-    __class_fields = ['contig', 'start', 'end', 'id', 'ref', 'alt', 'BAD']
+    __class_fields = ['contig', 'start', 'end', 'id', 'ref', 'alt']
     def __init__(self, fields):
         for field_name, field_value in zip(self.__class_fields, fields):
             setattr(self, field_name, field_value)
