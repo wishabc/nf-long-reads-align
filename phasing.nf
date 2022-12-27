@@ -64,6 +64,7 @@ process whatshap_haplotag {
     whatshap haplotag --output-haplotag-list ${stats} \
         -o ${name} --reference ${params.genome_fasta} \
         --ignore-read-groups --skip-missing-contigs \
+        --tag-supplementary \
         ${phased_vcf} ${bam_file}
     """
 }

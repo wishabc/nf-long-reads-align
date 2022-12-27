@@ -42,6 +42,28 @@ process mpileup {
     """
 }
 
+process mpileup_allele_wise {
+    conda params.conda
+    tag "${id}"
+    scratch true
+    publishDir params.outdir
+
+    input:
+        tuple val(id), path(filtered_sites_file), path(bam_file), path(bam_file_index)
+
+    output:
+        tuple val(id), path(name)
+
+    script:
+    name = "${id}.allele_counts.bed"
+    """
+    sort-bed ${filtered_sites_file} | bgzip -c > snps.bed.gz
+    tabix snps.bed.gz
+    python3 $moduleDir/bin/count_tag_allele_wise.py snps.bed.gz ${bam_file} > ${name}
+    """
+}
+
+
 process sort {
     tag "${id}"
     publishDir params.outdir
@@ -80,6 +102,14 @@ workflow pileupChunks {
         out
 
 }
+
+workflow alleleWise {
+    data = Channel.fromPath(params.samples_file)
+        .splitCsv(header:true, sep:'\t')
+        .map(row -> tuple(row.CELL_LINE, file(row.SNVS_PATH), file(row.BAM_PATH), file("${row.BAM_PATH}.bai")))
+    mpileup_allele_wise(data)
+}
+
 
 workflow {
     bam_files = Channel.fromPath(params.bams_list)
