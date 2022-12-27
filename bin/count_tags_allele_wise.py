@@ -223,30 +223,15 @@ def check_reads(reads_1, reads_2, unique_reads, ref, alt):
 	
 def main(argv = sys.argv[1:]):
 	args = parse_options(argv)
-	if args.original_dedup_cover is not None:
-		counts_dict = {}
-		with pysam.TabixFile(args.original_dedup_cover) as f:
-			for line in f.fetch():
-				line_arr = line.strip('\n').split('\t')
-				counts = int(line_arr[-1])
-				key = '\t'.join(line_arr[:-1])
-				counts_dict[key] = counts
-	else:
-		counts_dict = None
 	for variant, reads_1, reads_2, read_pairs in reads_to_dict(args.var_file, args.remapped_bam_file, args.chrom):
 		n_remapped_reads = len(read_pairs)
 		variant_str = str(variant)
 		if args.only_coverage:
 			print(variant_str, n_remapped_reads, sep='\t')
 		else:
-			n_ref, n_alt, n_failed_bias, n_failed_genotyping = check_reads(reads_1, reads_2,
+			n_ref, n_alt, _, _ = check_reads(reads_1, reads_2,
 																read_pairs, variant.ref, variant.alt)
-			
-			if counts_dict is None:
-				n_original_reads = variant.n_original_reads
-			else:
-				n_original_reads = counts_dict[variant_str]
-			n_failed_mapping = n_original_reads - n_remapped_reads
+
 
 			print(variant_str, n_ref, n_alt, sep='\t')
     
