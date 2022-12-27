@@ -1,4 +1,5 @@
 #!/usr/bin/env nextflow
+nextflow.enable.dsl = 2
 
 
 def set_key_for_group_tuple(ch) {
@@ -22,7 +23,7 @@ process align_reads {
     name = "${fastq.simpleName}.sam"
     log_files = "log.${fastq.simpleName}.txt"
     """
-    minimap2 ${params.genome} ${fastq} -a -z 600,200 -x map-ont --MD -Y -o ${name} &>${log_files}
+    minimap2 ${params.genome_fasta} ${fastq} -a -z 600,200 -x map-ont --MD -Y -o ${name} &>${log_files}
     """
 }
 
@@ -46,15 +47,12 @@ process merge_files {
     """
 }
 
+
 workflow {
-    fasta_ch = set_key_for_group_tuple(
-        Channel.fromPath(params.samples_file)
+    fasta_ch = Channel.fromPath(params.samples_file)
         .splitCsv(header:true, sep:'\t')
-        .map(
-            row -> tuple(row.cell_line, file(row.fastq_file))
-            )
-        )
+        .map(row -> tuple(row.cell_line, file(row.fastq_file)))
     
-    al_reads = align_reads(fasta_ch)
-    merge_files(al_reads.groupTuple())
+    al_reads = align_reads(set_key_for_group_tuple(fasta_ch))
+    bam_files = merge_files(al_reads.groupTuple())
 }
